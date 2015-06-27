@@ -1,5 +1,8 @@
- Authentication = require('../model/authentication');
-
+var Authentication = require('../model/authentication'),
+    client = require('twilio')('ACbdc623869e0f0056e24688e243c97b06 ',
+                               'd33245731b3e4c2d7dd14ceaf677501f '),
+    db = require('../model/db'),
+    express = require('express');
 
 function validatePhoneNumber(phoneNumber) {
     if(!phoneNumber)
