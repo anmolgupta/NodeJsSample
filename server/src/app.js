@@ -1,8 +1,7 @@
 var express = require('express'),
     db = require('./model/db'),
     bodyParser = require('body-parser'),
-    Users = require('./model/users'),
-    Authentication = require('./model/authentication');
+    Users = require('./model/users');
 //    path = require('path'),
 //    favicon = require('serve-favicon'),
 //    logger = require('morgan'),

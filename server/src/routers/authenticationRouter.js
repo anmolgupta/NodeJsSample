@@ -1,24 +1,5 @@
-var    Authentication = require('../model/authentication');
+ Authentication = require('../model/authentication');
 
-var twilioClient = require('twilio')('ACbdc623869e0f0056e24688e243c97b06 ',
-                               'd33245731b3e4c2d7dd14ceaf677501f ');
-function createOTP() {
-
-    var random = Math.random();
-    random *= 10000; 
-    random = parseInt(random);
-    return random;
-}
-
-function sendOTP(phoneNumber, otp, callbackMethod) {
-    client.sendMessage({
-        to:'+91 '+phoneNumber, 
-        from:'+1 415-599-2671',
-        body:'9455-4193 YOUR OTP is : ' + random
-    },function(error, message) {
-        callbackMethod(error,message);
-    });
-}
 
 function validatePhoneNumber(phoneNumber) {
     if(!phoneNumber)
@@ -30,26 +11,61 @@ function validatePhoneNumber(phoneNumber) {
     return false;
 }
 
+function createOTP() {
+
+    var random = Math.random();
+    random *= 10000; 
+    random = parseInt(random);
+    return random;
+}
+
+function padDigits(digits, number) {
+    if(number.length >= digits)
+        return number;
+    
+    else{
+        var numOf0s = digits - number.length;
+        for(var i = 0; i < numOf0s; i++)
+            number = '0' + number;
+    }
+    
+    return number;
+}
+
+function sendOTP(phoneNumber, otp, callbackMethod) {
+    client.sendMessage({
+        to:'+91 '+phoneNumber, 
+        from:'+1 415-599-2671',
+        body:'9455-4193 YOUR OTP is : ' + padDigits(4,otp)
+    },function(error, message) {
+        callbackMethod(error,message);
+    });
+}
+
+
 var authenticationRouter = express.Router();
 
 authenticationRouter.post('/', function(req, res) { //posting the phone NUmber
-   
-    var otp = createOTP();
     
     var phoneNumber = req.body.phoneNumber;
     
-    if(!validatePhoneNumber(phoneNumber))
+    if(!validatePhoneNumber(phoneNumber)){
         res.send({error:"Not a valid Telephone Number"});
+        return;
+    }
     
-    var callbackMethod = function(error,msg) {
     
-            if (error)
-                res.send({error:"Cannot send. Incorrect Phone NUmber. Please Try again later."})
+    var otp = createOTP();
+    
+    var callbackMethod = function(err,msg) {
+    
+            if (err)
+                res.send({error:"Cannot send. Incorrect Phone NUmber. Please Try again later."});
 //                res.send(error);
             else {        
                 //saving authentication in mongo
                 var initialAuthentication = new Authentication();
-                initialAuthentication.otp = random;
+                initialAuthentication.otp = otp;
                 var currentTimestamp = new Date().getTime();
                 initialAuthentication.startTimestamp = currentTimestamp;
                 initialAuthentication.endTimestamp = currentTimestamp + (30*60*1000);
@@ -63,7 +79,8 @@ authenticationRouter.post('/', function(req, res) { //posting the phone NUmber
                 });
             }
     
-    }
+    };
+    
     sendOTP(phoneNumber, otp, callbackMethod);
    
 });
@@ -100,8 +117,8 @@ authenticationRouter.get('/reOTP',function(res,req){
         }
         sendOTP(auth.phoneNumber, otp, callbackMethod);        
     
+    });
 });
-
 
 authenticationRouter.post('/confirmOTP', function(req, res){
     
@@ -126,3 +143,4 @@ authenticationRouter.post('/confirmOTP', function(req, res){
     })
 });
 
+module.exports = authenticationRouter;
