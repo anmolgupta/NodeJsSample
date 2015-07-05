@@ -2,12 +2,14 @@
   "name": "localhost",
   "version": "0.0.0",
   "description": "sample App",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
     "body-parser": "^1.13.1",
     "express": "^4.12.4",
-    "gulp": "^3.9.0",
+    "http": "0.0.0",
+    "jsonwebtoken": "^5.0.2",
     "mongoose": "^4.0.5",
+    "morgan": "^1.6.0",
     "socket.io": "^1.3.5",
     "twilio": "^2.2.1"
   },

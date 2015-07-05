@@ -1,0 +1,22 @@
+<section class = "chatListPage">
+
+    <div class = "main" ng-controller="ListController">
+        <ul class="artistlist" >
+            <li class="artist cf" ng-repeat="chat in chatList">
+                <a href="#chatWindow/{{chat._id}}">
+                <div class = "info">
+                    <h2>{{chat.chatName}}</h2>
+                </div>
+                </a>
+            </li>
+        </ul>
+
+    </div>
+
+    <div ng-controller="AddNewChat"> 
+        <p>CHAT NAME : <input type="text" ng-model="newChatName"></p> 
+        <p>USER ID:  <input type="text" ng-model="userID"></p> 
+        <p><button type="button" ng-click="createNewChat()">Send</button></p>  
+    </div>
+
+</section>
